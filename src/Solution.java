@@ -9,6 +9,8 @@ public class Solution {
 	private static final int N_MAX = 10000;
 	private int N, W, H;
 	private int[][] eventsFromInput;
+	private int[][] storyEvents; 
+	private int[][] reloadEvents;
 	
 //	private String[][] eventInfo;
 	
@@ -17,24 +19,60 @@ public class Solution {
 	}
 	
 	public Solution(int[] firstLineInput) {
-		N = Math.abs(firstLineInput[0]); // N is the number of events
-		W = Math.abs(firstLineInput[1]); // W is the time window representing the window of recent stories
-		H = Math.abs(firstLineInput[2]); // H is the height of the browser in pixels
+		this.N = Math.abs(firstLineInput[0]); // N is the number of events
+		this.W = Math.abs(firstLineInput[1]); // W is the time window representing the window of recent stories
+		this.H = Math.abs(firstLineInput[2]); // H is the height of the browser in pixels
 	}
 
 	public void aggregateEventInfo(BufferedReader br) throws IOException{
-		this.eventsFromInput = new int[N_MAX][4];
-		for(int i=0; i < this.N; i++){
+		this.eventsFromInput = new int[this.N][4];
+		int numReloads = 0;
+		int numStories = 0;
+		
+		for(int i=0; i<this.N; i++){
 			String[] nextString = br.readLine().split(" ");
-			eventsFromInput[i][0] = nextString[0].charAt(0);
+			this.eventsFromInput[i][0] = nextString[0].charAt(0);
+			
+			if(this.eventsFromInput[i][0] == "R".charAt(0)){
+				numReloads++;
+			} else if(this.eventsFromInput[i][0] == "S".charAt(0)){
+				numStories++;
+			} else {
+				System.out.println("There was a problem in determining whether the story was an R or S!");
+			}
 			
 			for(int j=1; j<nextString.length; j++){
-				eventsFromInput[i][j] = Integer.parseInt(nextString[j]);
+				this.eventsFromInput[i][j] = Integer.parseInt(nextString[j]);
 			}
 		}
+		
+		isolateEvents(this.eventsFromInput, numReloads, numStories);
+		System.out.println("The isolateEvents method ran without blowing up.");
 	}
 	
 	
+	private void isolateEvents(int[][] events, int numReloads, int numStories) {
+		int r = 0; // Number of reload events
+		int s = 0; // Number of story events
+		this.reloadEvents = new int[numReloads][1];
+		this.storyEvents = new int[numStories][3];
+		
+		for(int i=0; i < this.N; i++){
+			if(events[i][0] == "R".charAt(0)){ // If the event is a reload, append a copy to the reloadEvents array
+				this.reloadEvents[r][0] = events[i][1];
+				r++;
+			} else if(events[i][0] == "S".charAt(0)) { // If the event is a story, append a copy to the storyEvents array
+				for(int k=0; k<3; k++){
+					this.storyEvents[s][k] = events[i][k+1];
+				}
+				s++;
+			} else { // Display a message in the console for development purposes if the event is neither an R or S
+				System.out.println("There was a problem in isolating the events!");
+			}
+		}
+		
+	}
+
 	/**
 	 * @param args
 	 */
@@ -50,6 +88,7 @@ public class Solution {
 			
 			Solution soln = new Solution(firstLineInput);
 			soln.aggregateEventInfo(br);
+//			soln.traverseEventInfo();
 			
 			
 		} catch (Exception e) {
