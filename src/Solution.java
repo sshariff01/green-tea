@@ -50,10 +50,9 @@ public class Solution {
 		System.out.println("The isolateEvents method ran without blowing up.");
 	}
 	
-	
 	private void isolateEvents(int[][] events, int numReloads, int numStories) {
-		int r = 0; // Number of reload events
-		int s = 0; // Number of story events
+		int r = 0; // Count of reload events
+		int s = 0; // Count of story events
 		this.reloadEvents = new int[numReloads][1];
 		this.storyEvents = new int[numStories][3];
 		
@@ -70,7 +69,28 @@ public class Solution {
 				System.out.println("There was a problem in isolating the events!");
 			}
 		}
+	}
+	
+	private void traverseAndCalculate(){
+		int[][] targetStories = new int[9][2];
+		int numTargettedStories = 0;
+		int timeOfReload;
 		
+		for(int i=0; i<this.reloadEvents.length; i++){ // Begin by traversing through reloadEvents to determine the time frame of interest
+			timeOfReload = this.reloadEvents[i][0];
+			
+			for(int j=0; j<this.storyEvents.length; j++){
+				if(this.storyEvents[j][0] > (timeOfReload - this.W)) {
+					for(int k=0; k<2; k++){
+						targetStories[numTargettedStories][k] = this.storyEvents[j][k+1];
+					}
+				} else { // Break out of the for-loop because we've gotten all the stories we need to target
+					break; 
+				}
+			}
+			// For reload event at i, we now need to calculate the optimized score and output the appropriate information, 
+			// and then carry on to the next iteration of the for-loop (next reload event)
+		}
 	}
 
 	/**
@@ -88,7 +108,7 @@ public class Solution {
 			
 			Solution soln = new Solution(firstLineInput);
 			soln.aggregateEventInfo(br);
-//			soln.traverseEventInfo();
+			soln.traverseAndCalculate();
 			
 			
 		} catch (Exception e) {
