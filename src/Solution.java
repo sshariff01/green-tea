@@ -72,10 +72,13 @@ public class Solution {
 	}
 	
 	private void traverseAndCalculate(){
-		int[][] targetStories = new int[this.W - 1][2];
-		int numTargettedStories = 0;
+		int[][] targetStories = new int[this.W - 1][3];
+		int numTargetedStories = 0;
 		int timeOfReload;
-		boolean flag = false;
+		int totalScoreOfAllTargetedStories = 0;
+		int totalSizeOfAllTargetedStories = 0;
+		StringBuilder TargetedStoryIDs = new StringBuilder(); // Use StringBuilder to aggregate IDs of all Targeted stories
+		boolean flag = false; //TODO: Refine usage of flag
 		
 		for(int i=0; i<this.reloadEvents.length; i++){ // Begin by traversing through reloadEvents to determine the time frame of interest
 			timeOfReload = this.reloadEvents[i][0];
@@ -84,24 +87,36 @@ public class Solution {
 				if((this.storyEvents[j][0] > (timeOfReload - this.W)) && 
 						(this.storyEvents[j][0] < timeOfReload)) {
 
-					if(flag = false){
+					if(flag == false){
 						// Raise flag after some data has been populated in targetEvents so that for-loop is only broken
 						// if there is something in the loop. Worst case: for-loop is run all the way through
 						flag = true;
 					}
 					
-					for(int k=0; k<2; k++){
-						targetStories[numTargettedStories][k] = this.storyEvents[j][k+1];
+					for(int k=1; k<3; k++){
+						targetStories[numTargetedStories][k] = this.storyEvents[j][k];
 					}
-					numTargettedStories++;
+					targetStories[numTargetedStories][0] = j+1;					
+					TargetedStoryIDs.append(" ");
+					TargetedStoryIDs.append(targetStories[numTargetedStories][0]);
+					totalScoreOfAllTargetedStories += targetStories[numTargetedStories][1];
+					totalSizeOfAllTargetedStories += targetStories[numTargetedStories][2]; 
+					numTargetedStories++;
 				} else if(flag){ // Break out of the for-loop because we've gotten all the stories we need to target
 					break; 
 				}
 			}
-			System.out.println("Proceed to Next");
-			numTargettedStories = 0;
+			System.out.println("Ready to perform calculation");
 			// For reload event at i, we now need to calculate the optimized score and output the appropriate information, 
 			// and then carry on to the next iteration of the for-loop (next reload event)
+			
+			for(int l=0; l<targetStories.length; l++){
+				if(this.H > totalSizeOfAllTargetedStories){
+					System.out.println(totalScoreOfAllTargetedStories + " " + numTargetedStories + " " + TargetedStoryIDs);
+				}
+			}
+			
+			numTargetedStories = 0;
 			
 		}
 	}
