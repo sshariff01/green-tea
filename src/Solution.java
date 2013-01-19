@@ -72,24 +72,37 @@ public class Solution {
 	}
 	
 	private void traverseAndCalculate(){
-		int[][] targetStories = new int[9][2];
+		int[][] targetStories = new int[this.W - 1][2];
 		int numTargettedStories = 0;
 		int timeOfReload;
+		boolean flag = false;
 		
 		for(int i=0; i<this.reloadEvents.length; i++){ // Begin by traversing through reloadEvents to determine the time frame of interest
 			timeOfReload = this.reloadEvents[i][0];
 			
 			for(int j=0; j<this.storyEvents.length; j++){
-				if(this.storyEvents[j][0] > (timeOfReload - this.W)) {
+				if((this.storyEvents[j][0] > (timeOfReload - this.W)) && 
+						(this.storyEvents[j][0] < timeOfReload)) {
+
+					if(flag = false){
+						// Raise flag after some data has been populated in targetEvents so that for-loop is only broken
+						// if there is something in the loop. Worst case: for-loop is run all the way through
+						flag = true;
+					}
+					
 					for(int k=0; k<2; k++){
 						targetStories[numTargettedStories][k] = this.storyEvents[j][k+1];
 					}
-				} else { // Break out of the for-loop because we've gotten all the stories we need to target
+					numTargettedStories++;
+				} else if(flag){ // Break out of the for-loop because we've gotten all the stories we need to target
 					break; 
 				}
 			}
+			System.out.println("Proceed to Next");
+			numTargettedStories = 0;
 			// For reload event at i, we now need to calculate the optimized score and output the appropriate information, 
 			// and then carry on to the next iteration of the for-loop (next reload event)
+			
 		}
 	}
 
