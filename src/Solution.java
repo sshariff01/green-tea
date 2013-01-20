@@ -221,14 +221,15 @@ public class Solution {
 		return numberOfStories;
 	}
 
-	@SuppressWarnings("null")
 	private StringBuilder getStoryIds(int[] outputData, int n,
 			int[][] targetStories) {
 		StringBuilder storyIds = new StringBuilder();
+		boolean flag = false;
 		for (int i = 0; i < n; i++) {
 			if (outputData[i] == 1) {
-				if (storyIds == null) {
+				if (flag == false) {
 					storyIds.append(targetStories[i][0]);
+					flag = true;
 				} else {
 					storyIds.append(" ");
 					storyIds.append(targetStories[i][0]);
