@@ -1,10 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class Solution {
 	private int N, W, H;
@@ -118,21 +115,22 @@ public class Solution {
 					break;
 				}
 			}
-
 			// For reload event at i, we now need to calculate the optimized
 			// score and output the appropriate information,
 			// and then carry on to the next iteration of the for-loop (next
 			// reload event)
-			outputData = createAndExtractBinaryChart(targetStories,
-					numTargetedStories);
+			if (numTargetedStories != 0){
+				outputData = createAndExtractBinaryChart(targetStories,
+						numTargetedStories);
 
-			System.out
-					.println(outputData[numTargetedStories]
-							+ " "
-							+ getNumberOfStories(outputData, numTargetedStories)
-							+ " "
-							+ getStoryIds(outputData, numTargetedStories,
-									targetStories));
+				System.out
+						.println(outputData[numTargetedStories]
+								+ " "
+								+ getNumberOfStories(outputData, numTargetedStories)
+								+ " "
+								+ getStoryIds(outputData, numTargetedStories,
+										targetStories));
+			}
 
 			targetStories = new int[this.W - 1][3];
 			numTargetedStories = 0;
