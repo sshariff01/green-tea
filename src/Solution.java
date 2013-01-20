@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class Solution {
 
@@ -134,35 +135,23 @@ public class Solution {
 					break;
 				}
 			}
-//			System.out.println("Ready to perform calculation");
 			// For reload event at i, we now need to calculate the optimized
 			// score and output the appropriate information,
 			// and then carry on to the next iteration of the for-loop (next
 			// reload event)
 
-//			for (int l = 0; l < targetStories.length; l++) {
-//			if (this.H > totalSizeOfAllTargetedStories) {
-//				System.out.println(totalScoreOfAllTargetedStories + " "
-//						+ numTargetedStories + " " + targetedStoryIDs);
-//			} else {
-			this.binaryChart = sortInBinaryChart(targetStories, numTargetedStories);
-			outputData = new int[numTargetedStories+1];
-			outputData = getDataForOutput(outputData, numTargetedStories, targetStories);
-//				System.out.println(outputData);
+			outputData = createBinaryChart(targetStories, numTargetedStories);
+
 			System.out.println(outputData[numTargetedStories] + " " + getNumberOfStories(outputData, numTargetedStories) + " " + getStoryIds(outputData, numTargetedStories, targetStories));
-//			}
-//			}
-			
+
 			targetStories = new int[this.W - 1][3];
 			numTargetedStories = 0;
 			flag = false;
-//			totalScoreOfAllTargetedStories = 0;
-//			totalSizeOfAllTargetedStories = 0;
 
 		}
 	}
 
-	private int[][] sortInBinaryChart(int[][] targetStories, int numStories){
+	private int[] createBinaryChart(int[][] targetStories, int numStories){
 		int[][] binaryChart = new int[(int) Math.pow(2, numStories)][numStories+1];
 		String binaryRep;
 		StringBuffer reversedBinary;
@@ -192,26 +181,42 @@ public class Solution {
 			}
 			binaryChart[i][numStories] = combinationScore;
 		}
-		Arrays.sort(binaryChart[numStories]);
+		int[] outputData = new int[numStories+1];
+		outputData = getDataFromBinaryChart(binaryChart, numStories, targetStories);
 		
-		return binaryChart;
+		return outputData;
 	}
-
-	private int[] getDataForOutput(int[] outputData, int numStories, int[][] targetStories) {
+	
+	private int[] getDataFromBinaryChart(int[][] binaryChart, int numStories, int[][] targetStories){
+		// First we need to sort the two-dimensional array, but instead we sort their scores and use it to find the appropriate row in the binaryChart
+		int val = 0;
+		int[] scores = new int[(int) (Math.pow(2, numStories)-1)];
+		for(int i=(int) (Math.pow(2, numStories)-1); i>0; i--){
+			scores[i-1] = binaryChart[i][numStories];
+		}
+		Arrays.sort(scores);
+		
 		int combinationSize;
-		for(int i=(int) (Math.pow(2, numStories)-1); i>=0; i--){
+		int[] outputData = new int[numStories+1];
+		for(int j=scores.length; j>0; j--){
+			for(int l=scores.length; l>0; l--){
+				if(scores[j-1] == binaryChart[l][numStories]){
+					val = l;
+				}
+			}
 			combinationSize=0;
 			for(int k=0; k<numStories; k++){
-				if (this.binaryChart[i][k] == 1){
+				if (binaryChart[val][k] == 1){
 					combinationSize += targetStories[k][2];
 				}
 			}
 			if (combinationSize <= this.H){
-				outputData = this.binaryChart[i];
+				outputData = binaryChart[val];
 				return outputData;
 			}
 		}
-		return null;
+		
+		return outputData;
 	}
 
 	private int getNumberOfStories(int[] outputData, int n) {
